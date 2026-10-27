@@ -1,0 +1,50 @@
+=== 0. Inputs ===
+grid cells: 80,139  | every cell is a full 1 km² square (min 0.9998 km²)
+grid cells cover 80,132 km²; Czechia (LAU polygons) = 78,865 km²  -> border cells stick out into neighbouring countries
+grid population total: 10,524,167  (official Census 2021 result: 10 524 167)
+null values: 0, negative: 0
+
+=== A. Half of the people on how much land? ===
+densest 1,452 cells hold 5,262,569 people = 50.00% of the population
+  share of grid cells:           1452/80139 = 1.81%
+  share of Czechia's real area:  1452/78,865 km² = 1.84%
+  the 1452th densest cell still has 1,405 people/km²
+  towns with the most of these cells:
+    Praha                   217 km²    1,190,878 people
+    Brno                     75 km²      354,316 people
+    Ostrava                  46 km²      226,211 people
+    Plzeň                    29 km²      142,915 people
+    Liberec                  27 km²       89,260 people
+    Olomouc                  19 km²       86,661 people
+    České Budějovice         17 km²       79,712 people
+    Pardubice                17 km²       75,451 people
+    Hradec Králové           19 km²       73,849 people
+    Ústí nad Labem           20 km²       73,571 people
+    Havířov                  13 km²       61,434 people
+    Kladno                   11 km²       57,772 people
+  ... 430 municipalities in total
+
+  sensitivity to cell size (aggregate the 1 km grid):
+     1 km cells: half the people on 1,452 km² = 1.8% of Czechia
+     2 km cells: half the people on 2,364 km² = 3.0% of Czechia
+     5 km cells: half the people on 5,175 km² = 6.6% of Czechia
+    10 km cells: half the people on 8,900 km² = 11.3% of Czechia
+    municipalities (LAU, register 1 Jan 2021): half the people on 5,506 km² = 7.0% (204 of 6258 municipalities)
+
+=== B. Empty square kilometres ===
+cells with 0 residents: 36,334 of 80,139 = 45.3%
+only cells whose centre lies inside Czechia: 35,219 of 78,891 = 44.6%
+
+=== C. Prague ===
+densest cell 1kmN3006E4639: 23,252 people, centre 50.0838 N, 14.4528 E, municipality: Praha
+next densest: 20,513, 19,273, 15,054, 14,441, 13,954
+grid cells with centre inside Prague: 497 km², 1,299,750 people  (Census 2021 Prague: 1 301 432; register 1 Jan 2021: 1,335,084)
+
+=== D. Grid vs municipal register, per municipality ===
+correlation grid vs register over 6258 municipalities: r = 0.9998
+    Praha          register 1,335,084   grid 1,299,725
+    Brno           register   382,405   grid   397,016
+    Ostrava        register   284,982   grid   284,330
+    Plzeň          register   175,219   grid   173,432
+    Liberec        register   104,261   grid   104,427
+    Olomouc        register   100,514   grid   106,148

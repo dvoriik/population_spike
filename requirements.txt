@@ -1,0 +1,10 @@
+forge3d>=1.45
+geopandas>=1.0
+pyogrio
+rasterio
+pyproj
+numpy
+pandas
+openpyxl
+pillow
+matplotlib
