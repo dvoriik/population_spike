@@ -41,8 +41,11 @@ TALLEST_SPIKE_KM = 62.0        # Prague's peak height in the scene
 RELIEF_EXAGGERATION = 6.0      # terrain height multiplier (Sněžka 1 603 m -> ~10 km)
 SPARSE_FADE = 0.55             # how much the 1-24 people/km² class blends into the terrain
 SENTINEL = (255, 0, 255)       # outside Czechia; replaced by the plate after render
+CZ_AREA_KM2 = 78871.0          # official area of Czechia
 PERIOD = "Census 2021"                              # shown in the header (--period)
 DATA_CREDIT = "Data: ČSÚ – Populační grid SLDB 2021"  # shown in the footer (--data-credit)
+PEAK_WORD = "people live"      # stat tile wording (--peak-word), e.g. "residents registered"
+EMPTY_WORD = "have nobody living there"   # stat tile wording (--empty-word)
 
 THEMES = {
     # light, cool blue-grey relief + hot sunset spikes
@@ -382,7 +385,8 @@ def concentration_facts(grid):
     pop = np.sort(grid[np.isfinite(grid)])[::-1]
     cum = np.cumsum(pop)
     half_cells = int(np.searchsorted(cum, cum[-1] / 2) + 1)
-    return dict(half_cells=half_cells, half_share=half_cells / pop.size,
+    # share of Czechia's official area (78 871 km²), not of grid cells: border cells stick out abroad
+    return dict(half_cells=half_cells, half_share=half_cells / CZ_AREA_KM2,
                 empty_share=float((pop == 0).mean()), peak=int(pop[0]), total=int(cum[-1]))
 
 
@@ -456,8 +460,8 @@ def compose_linkedin(render_img, out_png, theme, *, grid, heights, base, extent,
     tiles = [
         (f"{facts['half_share'] * 100:.1f} %".replace(".", ","), "of the land is home to",
          "half of all people"),
-        (f"{round(facts['empty_share'] * 100)} %", "of all square kilometres", "have nobody living there"),
-        (nbsp(facts["peak"]), "people live in Prague's", "most crowded km²"),
+        (f"{round(facts['empty_share'] * 100)} %", "of all square kilometres", EMPTY_WORD),
+        (nbsp(facts["peak"]), f"{PEAK_WORD} in Prague's", "most crowded km²"),
     ]
     tw_ = (W - 2 * side) / 3
     for i, (big, l1, l2) in enumerate(tiles):
@@ -484,7 +488,7 @@ def compose_linkedin(render_img, out_png, theme, *, grid, heights, base, extent,
 
 
 def main():
-    global PERIOD, DATA_CREDIT, TALLEST_SPIKE_KM
+    global PERIOD, DATA_CREDIT, TALLEST_SPIKE_KM, PEAK_WORD, EMPTY_WORD
     ap = argparse.ArgumentParser()
     ap.add_argument("--layout", choices=["landscape", "linkedin"], default="landscape",
                     help="linkedin = 4:5 portrait 2160 x 2700 for a feed post")
@@ -504,10 +508,12 @@ def main():
     ap.add_argument("--period", default=PERIOD, help='header label, e.g. "1 Jan 2025 (estimate)"')
     ap.add_argument("--data-credit", default=DATA_CREDIT, help="footer data credit")
     ap.add_argument("--no-autofit", action="store_true", help="keep the camera exactly as given")
+    ap.add_argument("--peak-word", default=PEAK_WORD, help='stat tile wording, e.g. "residents registered"')
+    ap.add_argument("--empty-word", default=EMPTY_WORD, help='stat tile wording, e.g. "have no registered residents"')
     ap.add_argument("--spike-km", type=float, default=None, help="height of the tallest spike (default 62)")
     a = ap.parse_args()
 
-    PERIOD, DATA_CREDIT = a.period, a.data_credit
+    PERIOD, DATA_CREDIT, PEAK_WORD, EMPTY_WORD = a.period, a.data_credit, a.peak_word, a.empty_word
     theme = THEMES[a.theme]
     if a.spike_km:
         TALLEST_SPIKE_KM = a.spike_km
